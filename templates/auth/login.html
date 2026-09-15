@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Login - Workhub Manajemen Risiko</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-page">
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="login-brand">
+            <div class="login-logo">
+                <img src="{{ url_for('static', filename='img/logo-perindo.jpeg') }}" alt="">
+            </div>
+
+            <h1>WORKHUB RISIKO</h1>
+        </div>
+
+        <div class="login-title">
+            <h2>Masuk ke Workhub</h2>
+            <p>Silakan masuk menggunakan akun Anda.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="post">
+
+            <label>
+                Username
+                <input
+                    type="text"
+                    name="username"
+                    autocomplete="username"
+                    required
+                    autofocus>
+            </label>
+
+            <label>
+                Password
+                <input
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required>
+            </label>
+
+            <button class="primary login-button">
+                Masuk
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

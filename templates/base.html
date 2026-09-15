@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}
+        Workhub Manajemen Risiko
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="sidebar-logo">
+                <img
+                    src="{{ url_for('static', filename='img/logo-perindo.jpeg') }}"
+                    alt="Logo PT Perikanan Indonesia"
+                >
+            </div>
+            <div class="brand-text">
+                <strong>
+                    WORKHUB RISIKO
+                </strong>
+                <small>
+                    PT Perikanan Indonesia
+                </small>
+            </div>
+        </div>
+
+        <nav>
+
+            <a
+                href="{{ url_for('work.index') }}"
+                class="{% if request.endpoint == 'work.index' %}active{% endif %}"
+            >
+                🏠 Dashboard
+            </a>
+
+
+            <a
+                href="{{ url_for('progress.index') }}"
+                class="{% if request.endpoint and request.endpoint.startswith('progress.') %}active{% endif %}"
+            >
+                📊 Progress Pekerjaan
+            </a>
+
+
+            <a href="#">
+                ⚠ Monitoring Risiko
+            </a>
+
+
+            <a href="#">
+                📋 Kajian Risiko
+            </a>
+
+
+            <a href="#">
+                👥 Task Tim
+            </a>
+
+
+            <a href="#">
+                🗂 Database Dokumen
+            </a>
+
+
+            {% if g.user and has_permission(g.user["role"], "user_management") %}
+
+                <hr>
+
+                <a
+                    href="{{ url_for('admin_users.index') }}"
+                    class="{% if request.endpoint and request.endpoint.startswith('admin_users.') %}active{% endif %}"
+                >
+                    ⚙ Manajemen User
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+
+        <div class="sidebar-note">
+
+            <strong>
+                Database terpusat
+            </strong>
+
+            Data tersimpan di SQLite
+            dan dapat ditautkan
+            ke Google Drive.
+
+        </div>
+
+    </aside>
+
+
+    <main>
+
+        <header>
+
+            <!-- =========================================
+                PAGE HEADING
+                ========================================= -->
+
+            <div class="page-heading">
+
+                <h1>
+                    {% block page_title %}
+                        Dashboard
+                    {% endblock %}
+                </h1>
+
+                <p>
+                    {% block page_subtitle %}
+                        Pusat kendali pekerjaan dan dokumen
+                        manajemen risiko
+                    {% endblock %}
+                </p>
+
+            </div>
+
+
+            <!-- =========================================
+                HEADER ACTIONS + USER
+                ========================================= -->
+
+            <div class="header-actions">
+
+
+                <!-- ACTION BUTTON DARI HALAMAN -->
+
+                {% block header_actions %}
+                {% endblock %}
+
+
+                <!-- USER -->
+
+                {% if g.user %}
+
+                <div class="user-header">
+
+                    <div class="user-info">
+
+                        <div class="user-avatar">
+
+                            {{ g.user["full_name"][0]|upper }}
+
+                        </div>
+
+
+                        <div class="user-text">
+
+                            <strong>
+                                {{ g.user["full_name"] }}
+                            </strong>
+
+                            <span>
+
+                                {% if g.user["role"] == "superadmin" %}
+
+                                    Superadmin
+
+                                {% elif g.user["role"] == "vice_president" %}
+
+                                    Vice President
+
+                                {% else %}
+
+                                    User
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOGOUT -->
+
+                    <form
+                        method="post"
+                        action="{{ url_for('auth.logout') }}"
+                        class="logout-form"
+                    >
+
+                        <button
+                            type="submit"
+                            class="logout-button"
+                            title="Keluar dari aplikasi"
+                        >
+
+                            <span class="logout-icon">
+                                ↪
+                            </span>
+
+                            Keluar
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </header>
+
+
+        <div class="content">
+
+            {% with messages =
+                get_flashed_messages(
+                    with_categories=true
+                )
+            %}
+
+                {% for category, message
+                    in messages %}
+
+                    <div
+                        class="flash {{ category }}"
+                    >
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endwith %}
+
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+    </main>
+
+
+    {% block modal %}
+    {% endblock %}
+
+
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+
+</html>

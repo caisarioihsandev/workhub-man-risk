@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Manajemen User - Workhub Risiko
+{% endblock %}
+
+
+{% block page_title %}
+Manajemen User
+{% endblock %}
+
+
+{% block page_subtitle %}
+Kelola akun pengguna dan hak akses sistem
+{% endblock %}
+
+
+{% block header_actions %}
+
+<a
+    href="{{ url_for('admin_users.create') }}"
+    class="primary"
+>
+    ＋ Tambah User
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="panel user-management-panel">
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <div class="user-management-head">
+
+        <div>
+
+            <h2>
+                Daftar Pengguna
+            </h2>
+
+            <p>
+                Kelola pengguna yang memiliki akses
+                ke Workhub Manajemen Risiko.
+            </p>
+
+        </div>
+
+        <div class="user-count">
+
+            <strong>
+                {{ users|length }}
+            </strong>
+
+            <span>
+                Total User
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         TABLE
+         ========================================= -->
+
+    <div class="table-wrap">
+
+        <table class="users-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Pengguna
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Role
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Dibuat
+                    </th>
+
+                    <th>
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for user in users %}
+
+                <tr>
+
+                    <!-- USER -->
+
+                    <td>
+
+                        <div class="table-user">
+
+                            <div class="table-avatar">
+
+                                {{ user["full_name"][0]|upper }}
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ user["full_name"] }}
+                                </strong>
+
+                                <small>
+                                    @{{ user["username"] }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- EMAIL -->
+
+                    <td>
+
+                        {% if user["email"] %}
+
+                            {{ user["email"] }}
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ROLE -->
+
+                    <td>
+
+                        {% if user["role"] == "superadmin" %}
+
+                            <span class="badge badge-superadmin">
+                                Superadmin
+                            </span>
+
+                        {% elif user["role"] == "vice_president" %}
+
+                            <span class="badge badge-direksi">
+                                Vice President
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-user">
+                                User
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        {% if user["is_active"] %}
+
+                            <span class="status status-active">
+                                <i></i>
+                                Aktif
+                            </span>
+
+                        {% else %}
+
+                            <span class="status status-inactive">
+                                <i></i>
+                                Nonaktif
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- CREATED -->
+
+                    <td>
+
+                        <span class="date-text">
+
+                            {{ user["created_at"][:10] }}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- ACTION -->
+
+                    <td>
+
+                        <div class="actions">
+
+                            <a
+                                href="{{ url_for(
+                                    'admin_users.edit',
+                                    user_id=user['id']
+                                ) }}"
+                                class="small action-edit"
+                            >
+                                Edit
+                            </a>
+
+
+                            {% if user["id"] != g.user["id"] %}
+
+                            <form
+                                method="post"
+                                action="{{ url_for(
+                                    'admin_users.toggle',
+                                    user_id=user['id']
+                                ) }}"
+                                onsubmit="return confirm(
+                                    '{% if user['is_active'] %}Nonaktifkan{% else %}Aktifkan{% endif %} user ini?'
+                                );"
+                            >
+
+                                {% if user["is_active"] %}
+
+                                    <button
+                                        type="submit"
+                                        class="small action-disable"
+                                    >
+                                        Nonaktifkan
+                                    </button>
+
+                                {% else %}
+
+                                    <button
+                                        type="submit"
+                                        class="small action-enable"
+                                    >
+                                        Aktifkan
+                                    </button>
+
+                                {% endif %}
+
+                            </form>
+
+                            {% else %}
+
+                            <span class="current-user">
+                                Anda
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+
+                        Belum ada user.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}
+Tambah User - Workhub Risiko
+{% endblock %}
+
+{% block page_title %}
+Tambah User
+{% endblock %}
+
+{% block page_subtitle %}
+Tambahkan akun baru ke sistem Workhub Manajemen Risiko
+{% endblock %}
+
+{% block content %}
+
+<div class="panel user-form-panel">
+    <div class="form-panel-head">
+        <div>
+            <h2>Informasi Pengguna</h2>
+            <p>
+                Lengkapi data pengguna dan tentukan hak aksesnya.
+            </p>
+        </div>
+    </div>
+
+    <form method="post" class="user-form">
+        <div class="form-grid">
+
+            <!-- USERNAME -->
+
+            <div class="form-field">
+
+                <label for="username">
+                    Username
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="{{ request.form.get('username', '') }}"
+                    autocomplete="username"
+                    required
+                >
+
+                <small>
+                    Username digunakan untuk masuk ke sistem.
+                </small>
+
+            </div>
+
+
+            <!-- NAMA -->
+
+            <div class="form-field">
+
+                <label for="full_name">
+                    Nama Lengkap
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    value="{{ request.form.get('full_name', '') }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-field">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ request.form.get('email', '') }}"
+                    autocomplete="email"
+                >
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="form-field">
+
+                <label for="role">
+                    Role
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="role"
+                    name="role"
+                    required
+                >
+
+                    {% for value, label in role_labels.items() %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if request.form.get('role', 'user') == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <small>
+                    Role menentukan hak akses pengguna.
+                </small>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-field">
+
+                <label for="password">
+                    Password
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+
+                <small>
+                    Minimal 8 karakter.
+                </small>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="form-field">
+
+                <label>
+                    Status Akun
+                </label>
+
+                <label class="switch-field">
+
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="1"
+                        {% if request.form.get('is_active', '1') %}
+                            checked
+                        {% endif %}
+                    >
+
+                    <span class="switch"></span>
+
+                    <span>
+                        Aktif
+                    </span>
+
+                </label>
+
+                <small>
+                    User aktif dapat masuk ke sistem.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('admin_users.index') }}"
+                class="secondary"
+            >
+                Batal
+            </a>
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                Simpan User
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

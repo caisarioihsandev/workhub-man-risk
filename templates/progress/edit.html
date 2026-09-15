@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+Edit Pekerjaan
+{% endblock %}
+
+
+{% block page_subtitle %}
+Perbarui informasi pekerjaan
+{% endblock %}
+
+
+{% block header_actions %}
+
+<a
+    href="{{ url_for('progress.index') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card edit-work-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+                Edit Pekerjaan
+            </h2>
+
+            <p>
+                Perbarui informasi pekerjaan berikut.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if error %}
+
+    <div class="form-error">
+        {{ error }}
+    </div>
+
+    {% endif %}
+
+
+    <form
+        method="post"
+        class="edit-work-form"
+    >
+
+        <div class="form-grid">
+
+
+            <!-- JUDUL -->
+
+            <label class="wide">
+
+                Judul Pekerjaan
+
+                <input
+                    type="text"
+                    name="title"
+                    value="{{ item['title'] or '' }}"
+                    required
+                >
+
+            </label>
+
+
+            <!-- KATEGORI -->
+
+            <label>
+
+                Kategori
+
+                <select name="category">
+
+                    {% for category in categories %}
+
+                    <option
+                        value="{{ category }}"
+                        {% if item['category'] == category %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </label>
+
+
+            <!-- PIC -->
+
+            <label>
+
+                PIC
+
+                <input
+                    type="text"
+                    name="pic"
+                    value="{{ item['pic'] or '' }}"
+                >
+
+            </label>
+
+
+            <!-- ANGGOTA TIM -->
+
+            <label>
+
+                Anggota Tim / Email
+
+                <input
+                    type="text"
+                    name="assignees"
+                    value="{{ item['assignees'] or '' }}"
+                >
+
+            </label>
+
+
+            <!-- PRIORITAS -->
+
+            <label>
+
+                Prioritas
+
+                <select name="priority">
+
+                    {% for priority in priorities %}
+
+                    <option
+                        value="{{ priority }}"
+                        {% if item['priority'] == priority %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ priority }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </label>
+
+
+            <!-- DEADLINE -->
+
+            <label>
+
+                Tenggat
+
+                <input
+                    type="date"
+                    name="deadline"
+                    value="{{ item['deadline'] or '' }}"
+                >
+
+            </label>
+
+
+            <!-- GOOGLE DRIVE -->
+
+            <label class="wide">
+
+                Link Google Drive
+
+                <input
+                    type="url"
+                    name="drive_url"
+                    value="{{ item['drive_url'] or '' }}"
+                    placeholder="https://drive.google.com/..."
+                >
+
+            </label>
+
+
+            <!-- CATATAN -->
+
+            <label class="wide">
+
+                Catatan
+
+                <textarea
+                    name="notes"
+                    rows="5"
+                >{{ item['notes'] or '' }}</textarea>
+
+            </label>
+
+
+        </div>
+
+
+        <div class="edit-work-actions">
+
+            <a
+                href="{{ url_for('progress.index') }}"
+                class="secondary"
+            >
+                Batal
+            </a>
+
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

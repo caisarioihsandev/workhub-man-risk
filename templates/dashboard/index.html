@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard - Workhub Risiko
+{% endblock %}
+
+{% block page_title %}
+Dashboard
+{% endblock %}
+
+{% block page_subtitle %}
+Pusat kendali pekerjaan dan dokumen manajemen risiko
+{% endblock %}
+
+{% block header_actions %}
+
+<button
+    class="primary"
+    data-open-modal
+>
+    ＋ Tambah Pekerjaan
+</button>
+
+{% endblock %}
+
+{% block content %}
+
+<section class="metrics">
+    <article><span class="icon teal">☷</span><b>{{ metrics.active }}</b><small>Pekerjaan Aktif</small></article>
+    <article><span class="icon red">!</span><b>{{ metrics.overdue }}</b><small>Overdue</small></article>
+    <article><span class="icon amber">✓</span><b>{{ metrics.review }}</b><small>Menunggu Review</small></article>
+    <article><span class="icon green">✓</span><b>{{ metrics.done }}</b><small>Selesai</small></article>
+    <article><span class="icon blue">⌕</span><b>{{ metrics.studies }}</b><small>Kajian Risiko</small></article>
+</section>
+
+
+<section class="summary">
+ <article class="panel"><h2>Ringkasan progres</h2><p>Distribusi pekerjaan berdasarkan status</p>
+    {% for status in statuses %}{% set count=status_counts[status] %}{% set pct=(count / total * 100)|round|int if total else 0 %}
+      <div class="bar-label"><span>{{ status }}</span><span>{{ count }} item · {{ pct }}%</span></div>
+      <div class="bar"><i style="width:'{{ pct }}%'"></i></div>
+    {% endfor %}
+  </article>
+  <article class="focus"><p>Fokus pengendalian</p><h2>Data yang perlu perhatian</h2><strong>{{ metrics.overdue }}</strong><span>pekerjaan melewati tenggat</span><strong>{{ metrics.review }}</strong><span>pekerjaan menunggu review</span></article>
+</section>
+
+
+<section class="panel table-panel" id="pekerjaan">
+ <form class="filters" method="get">
+    <input name="q" value="{{ query }}" placeholder="Cari pekerjaan, PIC, atau anggota tim...">
+    <select name="status"><option value="">Semua Status</option>{% for s in statuses %}<option {{ 'selected' if selected_status==s }}>{{ s }}</option>{% endfor %}</select>
+    <select name="category"><option value="">Semua Kategori</option>{% for c in categories %}<option {{ 'selected' if selected_category==c }}>{{ c }}</option>{% endfor %}</select>
+    <button class="secondary">Filter</button>
+  </form>
+  <div class="table-wrap"><table><thead><tr><th>Pekerjaan</th><th>PIC / Tim</th><th>Tenggat</th><th>Status & progres</th><th>Dokumen</th><th>Aksi</th></tr></thead><tbody>
+  {% for item in items %}<tr>
+    <td><strong>{{ item.title }}</strong><small>{{ item.category }} · {{ item.priority }}</small></td>
+    <td>{{ item.pic or '—' }}<small>{{ item.assignees or 'Tim belum ditetapkan' }}</small></td>
+    <td class="{{ 'overdue' if item.overdue }}">{{ item.deadline or '—' }}{% if item.overdue %}<small>Overdue</small>{% endif %}</td>
+    <td><form class="inline-form" method="post" action="{{ url_for('work.update_item', item_id=item.id) }}"><select name="status">{% for s in statuses %}<option {{ 'selected' if item.status==s }}>{{ s }}</option>{% endfor %}</select><input aria-label="Progres" type="number" name="progress" min="0" max="100" value="{{ item.progress }}"><span>%</span><button class="small">Simpan</button></form></td>
+    <td>{% if item.drive_url %}<a class="drive" href="{{ item.drive_url }}" target="_blank" rel="noopener">▣ Buka</a>{% else %}—{% endif %}</td>
+    <td class="actions"><a class="small secondary" href="{{ url_for('work.disposition_email', item_id=item.id) }}">✉ Disposisi</a><form method="post" action="{{ url_for('work.delete_item', item_id=item.id) }}" onsubmit="return confirm('Hapus pekerjaan ini?')"><button class="small danger">Hapus</button></form></td>
+  </tr>{% else %}<tr><td colspan="6" class="empty">Belum ada data. Klik “Tambah Pekerjaan” untuk mulai mengisi.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modal = document.getElementById("item-modal");
+
+    if (!modal) {
+        console.error("Modal Tambah Pekerjaan tidak ditemukan.");
+        return;
+    }
+
+
+    /* ==========================================
+       BUKA MODAL
+       ========================================== */
+
+    document
+        .querySelectorAll("[data-open-modal]")
+        .forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                modal.showModal();
+
+            });
+
+        });
+
+
+    /* ==========================================
+       TUTUP MODAL
+       ========================================== */
+
+    document
+        .querySelectorAll("[data-close-modal]")
+        .forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                modal.close();
+
+            });
+
+        });
+
+
+    /* ==========================================
+       KLIK AREA LUAR MODAL
+       ========================================== */
+
+    modal.addEventListener("click", function (event) {
+
+        const rect = modal.getBoundingClientRect();
+
+        const clickedInside =
+            event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom;
+
+        if (!clickedInside) {
+
+            modal.close();
+
+        }
+
+    });
+
+
+    /* ==========================================
+       AUTO OPEN DARI PROGRESS
+       ========================================== */
+
+    {% if open_add %}
+
+        modal.showModal();
+
+    {% endif %}
+
+});
+</script>
+
+{% endblock %}
+
+{% block modal %}
+<dialog id="item-modal"><form method="post" action="{{ url_for('work.create_item') }}"><input type="hidden" name="return_to" value="{% if open_add %}progress{% else %}dashboard{% endif %}"><div class="modal-head"><div><h2>Tambah pekerjaan baru</h2><p>Kolom yang belum diketahui dapat dibiarkan kosong.</p></div><button type="button" class="close" data-close-modal>×</button></div><div class="form-grid">
+  <label class="wide">Judul pekerjaan<input name="title" required></label>
+  <label>Kategori<select name="category">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></label>
+  <label>PIC<input name="pic"></label>
+  <label>Anggota tim / email<input name="assignees"></label>
+  <label>Prioritas<select name="priority">{% for p in priorities %}<option>{{ p }}</option>{% endfor %}</select></label>
+  <label>Tenggat<input type="date" name="deadline"></label>
+  <label class="wide">Link Google Drive<input type="url" name="drive_url" placeholder="https://drive.google.com/..."></label>
+  <label class="wide">Catatan<textarea name="notes" rows="3"></textarea></label>
+</div><div class="modal-actions"><button type="button" class="secondary" data-close-modal>Batal</button><button class="primary">Simpan Pekerjaan</button></div></form></dialog>
+{% endblock %}

@@ -1,0 +1,696 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+Progress Pekerjaan
+{% endblock %}
+
+
+{% block page_subtitle %}
+Monitoring perkembangan, status, PIC, dan deadline pekerjaan
+{% endblock %}
+
+
+{% block header_actions %}
+
+<a
+    href="{{ url_for('work.index', open_add='1') }}"
+    class="primary"
+>
+    ＋ Tambah Pekerjaan
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =========================
+     SUMMARY
+     ========================= -->
+
+<div class="progress-summary">
+
+    <div class="summary-card">
+        <div class="summary-label">
+            Total Pekerjaan
+        </div>
+
+        <div class="summary-value">
+            {{ total }}
+        </div>
+    </div>
+
+
+    <div class="summary-card">
+        <div class="summary-label">
+            Belum Mulai
+        </div>
+
+        <div class="summary-value">
+            {{ belum_mulai }}
+        </div>
+    </div>
+
+
+    <div class="summary-card">
+        <div class="summary-label">
+            Berjalan
+        </div>
+
+        <div class="summary-value">
+            {{ berjalan }}
+        </div>
+    </div>
+
+
+    <div class="summary-card">
+        <div class="summary-label">
+            Selesai
+        </div>
+
+        <div class="summary-value">
+            {{ selesai }}
+        </div>
+    </div>
+
+
+    <div class="summary-card">
+        <div class="summary-label">
+            Terlambat
+        </div>
+
+        <div class="summary-value">
+            {{ terlambat }}
+        </div>
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FILTER
+     ========================= -->
+
+<div class="card progress-filter-card">
+
+    <form
+        method="get"
+        class="progress-filter"
+    >
+
+        <div class="filter-group">
+
+            <label>
+                Cari Pekerjaan
+            </label>
+
+            <input
+                type="text"
+                name="q"
+                value="{{ filters.q }}"
+                placeholder="Nama pekerjaan, PIC, kategori..."
+            >
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>
+                Status
+            </label>
+
+            <select name="status">
+
+                <option value="">
+                    Semua Status
+                </option>
+
+                {% for row in statuses %}
+
+                    <option
+                        value="{{ row['status'] }}"
+                        {% if filters.status == row['status'] %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ row['status'] }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>
+                Prioritas
+            </label>
+
+            <select name="priority">
+
+                <option value="">
+                    Semua Prioritas
+                </option>
+
+                {% for row in priorities %}
+
+                    <option
+                        value="{{ row['priority'] }}"
+                        {% if filters.priority == row['priority'] %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ row['priority'] }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>
+                PIC
+            </label>
+
+            <select name="pic">
+
+                <option value="">
+                    Semua PIC
+                </option>
+
+                {% for row in pics %}
+
+                    <option
+                        value="{{ row['pic'] }}"
+                        {% if filters.pic == row['pic'] %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ row['pic'] }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                🔎 Filter
+            </button>
+
+            <a
+                href="{{ url_for('progress.index') }}"
+                class="secondary"
+            >
+                Reset
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- =========================
+     TABLE
+     ========================= -->
+
+<div class="card progress-table-card">
+
+    <div class="card-header">
+
+        <div>
+            <h2>Daftar Progress Pekerjaan</h2>
+
+            <p>
+                Menampilkan {{ work_items|length }}
+                pekerjaan berdasarkan filter yang dipilih.
+            </p>
+        </div>
+
+    </div>
+
+
+    {% if work_items %}
+
+    <div class="progress-table-wrap">
+
+        <table class="progress-table">
+
+            <thead>
+
+                <tr>
+
+                    <th class="col-work">
+                        Pekerjaan
+                    </th>
+
+                    <th class="col-pic">
+                        PIC / Tim
+                    </th>
+
+                    <th class="col-deadline">
+                        Tenggat
+                    </th>
+
+                    <th class="col-status">
+                        Status
+                    </th>
+
+                    <th class="col-progress">
+                        Progres
+                    </th>
+
+                    <th class="col-document">
+                        Dokumen
+                    </th>
+
+                    <th class="col-action">
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in work_items %}
+
+                {% set progress = item["progress"] or 0 %}
+
+                <tr>
+
+                    <!-- =====================
+                         PEKERJAAN
+                         ===================== -->
+
+                    <td class="work-column">
+
+                        <div class="work-title">
+                            {{ item["title"] }}
+                        </div>
+
+                        {% if item["category"] %}
+
+                        <div class="work-category">
+                            {{ item["category"] }}
+                        </div>
+
+                        {% endif %}
+
+                        {% if item["priority"] %}
+
+                        <div class="work-priority">
+                            {{ item["priority"] }}
+                        </div>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- =====================
+                         PIC / TIM
+                         ===================== -->
+
+                    <td class="pic-column">
+
+                        {% if item["pic"] %}
+
+                            <div class="pic-name">
+                                {{ item["pic"] }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="pic-name">
+                                PIC belum ditetapkan
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="pic-email">
+
+                            {% if item["pic"] %}
+                                Email PIC belum ditetapkan
+                            {% else %}
+                                Email PIC belum ditetapkan
+                            {% endif %}
+
+                        </div>
+
+
+                        {% if item["assignees"] %}
+
+                        <div class="team-name">
+                            {{ item["assignees"] }}
+                        </div>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- =====================
+                         TENGGAT
+                         ===================== -->
+
+                    <td class="deadline-column">
+
+                        {% if item["deadline"] %}
+
+                            {% set deadline = item["deadline"]|string %}
+
+                            <div class="deadline-date">
+
+                                {{ deadline[:2] }}
+                                {{ deadline[5:7] }}
+                                {{ deadline[0:4] }}
+
+                            </div>
+
+                        {% else %}
+
+                            <span class="muted-text">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- =====================
+                         STATUS
+                         ===================== -->
+
+                    <td class="status-column">
+
+                        <select
+                            class="progress-status-select"
+                            data-work-id="{{ item['id'] }}"
+                        >
+
+                            <option
+                                value="Belum Dimulai"
+                                {% if item["status"] == "Belum Dimulai" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Belum Dimulai
+                            </option>
+
+                            <option
+                                value="Dalam Proses"
+                                {% if item["status"] == "Dalam Proses" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Dalam Proses
+                            </option>
+
+                            <option
+                                value="Selesai"
+                                {% if item["status"] == "Selesai" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Selesai
+                            </option>
+
+                        </select>
+
+                    </td>
+
+                    <!-- =====================
+                         PROGRES
+                         ===================== -->
+
+                    <td class="progress-column">
+                        <div class="progress-control">
+                            <span class="progress-number">
+                                {{ progress }}%
+                            </span>
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                value="{{ progress }}"
+                                class="progress-range"
+                                data-work-id="{{ item['id'] }}"
+                            >
+                        </div>
+                    </td>
+
+
+                    <!-- =====================
+                         DOKUMEN
+                         ===================== -->
+
+                    <td class="document-column">
+
+                        {% if item["drive_url"] %}
+
+                            <a
+                                href="{{ item['drive_url'] }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="document-link"
+                            >
+                                <span>▤</span>
+                                Buka
+                            </a>
+
+                        {% else %}
+
+                            <span class="muted-text">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- =====================
+                         AKSI
+                         ===================== -->
+
+                    <td class="action-column">
+
+                        <div class="work-actions">
+
+                            <a
+                                href="{{ url_for('work.disposition_email', item_id=item['id']) }}"
+                                class="action-button disposition-button"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ➤ Disposisi
+                            </a>
+
+
+                            <a
+                                href="{{ url_for('progress.edit', work_id=item['id']) }}"
+                                class="action-button edit-button"
+                            >
+                                Edit
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            📋
+        </div>
+
+        <h3>
+            Tidak ada pekerjaan
+        </h3>
+
+        <p>
+            Tidak ditemukan pekerjaan berdasarkan filter yang dipilih.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /*
+     * ==========================================
+     * UPDATE STATUS
+     * ==========================================
+     */
+
+    document
+        .querySelectorAll(".progress-status-select")
+        .forEach(function (select) {
+
+            select.addEventListener("change", async function () {
+
+                const workId = this.dataset.workId;
+                const status = this.value;
+
+                try {
+
+                    const response = await fetch(
+                        `/progress/${workId}/status`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                status: status
+                            })
+                        }
+                    );
+
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success) {
+
+                        alert(
+                            result.message ||
+                            "Gagal memperbarui status."
+                        );
+
+                        return;
+                    }
+
+                    /*
+                     * Reload supaya:
+                     * - progress ikut berubah
+                     * - summary ikut berubah
+                     * - status terlambat ikut dihitung ulang
+                     */
+
+                    window.location.reload();
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Terjadi kesalahan saat memperbarui status."
+                    );
+                }
+
+            });
+
+        });
+
+
+    /*
+     * ==========================================
+     * UPDATE PROGRESS
+     * ==========================================
+     */
+
+    document
+        .querySelectorAll(".progress-range")
+        .forEach(function (slider) {
+
+            slider.addEventListener("change", async function () {
+
+                const workId = this.dataset.workId;
+                const progress = this.value;
+
+                try {
+
+                    const response = await fetch(
+                        `/progress/${workId}/progress`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                progress: progress
+                            })
+                        }
+                    );
+
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success) {
+
+                        alert(
+                            result.message ||
+                            "Gagal memperbarui progress."
+                        );
+
+                        return;
+                    }
+
+                    /*
+                     * Reload agar status dan summary
+                     * ikut diperbarui.
+                     */
+
+                    window.location.reload();
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Terjadi kesalahan saat memperbarui progress."
+                    );
+                }
+
+            });
+
+        });
+
+});
+
+</script>
+
+{% endblock %}
