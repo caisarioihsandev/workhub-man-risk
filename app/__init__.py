@@ -38,16 +38,12 @@ def create_app():
     # =====================================================
 
     app.config.from_mapping(
-
-        SECRET_KEY=os.environ.get(
-            "SECRET_KEY",
-            "change-this-in-production"
-        ),
-
-        DATABASE=str(
-            BASE_DIR / "workhub.db"
-        ),
-    )
+    SECRET_KEY=os.environ.get("SECRET_KEY", "change-this-in-production"),
+    DATABASE=os.environ.get(
+        "DATABASE_PATH",
+        str(BASE_DIR / "workhub.db")
+    ),
+)
 
 
     # =====================================================
