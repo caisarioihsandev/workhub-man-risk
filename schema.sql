@@ -45,3 +45,19 @@ ON work_items(category);
 CREATE INDEX IF NOT EXISTS
 idx_work_items_deadline
 ON work_items(deadline);
+
+-- ============================================================
+-- DATABASE DOKUMEN
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    document_type TEXT NOT NULL DEFAULT '',
+    drive_url TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_documents_type
+ON documents(document_type);

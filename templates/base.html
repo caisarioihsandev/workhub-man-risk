@@ -49,22 +49,34 @@
             </a>
 
 
-            <a href="#">
+            <a 
+                href="{{ url_for('monitoring.index') }}"
+                class="{% if request.endpoint and request.endpoint.startswith('monitoring.') %}active{% endif %}"
+            >
                 ⚠ Monitoring Risiko
             </a>
 
 
-            <a href="#">
+            <a
+                href="{{ url_for('kajian.index') }}"
+                class="{% if request.endpoint and request.endpoint.startswith('kajian.') %}active{% endif %}"
+            >
                 📋 Kajian Risiko
             </a>
 
 
-            <a href="#">
+            <a 
+                href="{{ url_for('work.team_tasks') }}"
+                class="{% if request.endpoint and request.endpoint.startswith('work.team_tasks') %}active{% endif %}"
+            >
                 👥 Task Tim
             </a>
 
 
-            <a href="#">
+            <a 
+                href="{{ url_for('documents.index') }}"
+                class="{% if request.endpoint and request.endpoint.startswith('documents.') %}active{% endif %}"
+            >
                 🗂 Database Dokumen
             </a>
 
@@ -143,16 +155,21 @@
 
                 {% if g.user %}
 
-                <div class="user-header">
+                <div class="user-menu">
 
-                    <div class="user-info">
+                    <!-- USER BUTTON -->
+
+                    <button
+                        type="button"
+                        class="user-menu-button"
+                        id="user-menu-button"
+                        aria-expanded="false"
+                        aria-controls="user-dropdown"
+                    >
 
                         <div class="user-avatar">
-
                             {{ g.user["full_name"][0]|upper }}
-
                         </div>
-
 
                         <div class="user-text">
 
@@ -180,32 +197,82 @@
 
                         </div>
 
-                    </div>
+                        <span class="user-menu-arrow">
+                            ▾
+                        </span>
+
+                    </button>
 
 
-                    <!-- LOGOUT -->
+                    <!-- DROPDOWN -->
 
-                    <form
-                        method="post"
-                        action="{{ url_for('auth.logout') }}"
-                        class="logout-form"
+                    <div
+                        class="user-dropdown"
+                        id="user-dropdown"
+                        hidden
                     >
 
-                        <button
-                            type="submit"
-                            class="logout-button"
-                            title="Keluar dari aplikasi"
+                        <div class="user-dropdown-header">
+
+                            <div class="user-dropdown-avatar">
+                                {{ g.user["full_name"][0]|upper }}
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ g.user["full_name"] }}
+                                </strong>
+
+                                <span>
+                                    {{ g.user["email"] or "Email belum diisi" }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="user-dropdown-divider"></div>
+
+
+                        <a
+                            href="{{ url_for('auth.profile') }}"
+                            class="user-dropdown-item"
+                        >
+                            <span>👤</span>
+                            <span>Profil Saya</span>
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('auth.profile') }}#keamanan"
+                            class="user-dropdown-item"
+                        >
+                            <span>⚙</span>
+                            <span>Pengaturan Akun</span>
+                        </a>
+
+
+                        <div class="user-dropdown-divider"></div>
+
+
+                        <form
+                            method="post"
+                            action="{{ url_for('auth.logout') }}"
                         >
 
-                            <span class="logout-icon">
-                                ↪
-                            </span>
+                            <button
+                                type="submit"
+                                class="user-dropdown-item logout-item"
+                            >
+                                <span>↪</span>
+                                <span>Keluar</span>
+                            </button>
 
-                            Keluar
+                        </form>
 
-                        </button>
-
-                    </form>
+                    </div>
 
                 </div>
 
@@ -251,6 +318,130 @@
 
 
     {% block scripts %}
+    <script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const button =
+                document.getElementById(
+                    "user-menu-button"
+                );
+
+            const dropdown =
+                document.getElementById(
+                    "user-dropdown"
+                );
+
+            if (!button || !dropdown) {
+                return;
+            }
+
+
+            // ==========================================
+            // TOGGLE DROPDOWN
+            // ==========================================
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                    const isOpen =
+                        !dropdown.hasAttribute(
+                            "hidden"
+                        );
+
+                    if (isOpen) {
+
+                        dropdown.setAttribute(
+                            "hidden",
+                            ""
+                        );
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    } else {
+
+                        dropdown.removeAttribute(
+                            "hidden"
+                        );
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "true"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            // ==========================================
+            // KLIK DI LUAR DROPDOWN
+            // ==========================================
+
+            document.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        !dropdown.contains(event.target)
+                        &&
+                        !button.contains(event.target)
+                    ) {
+
+                        dropdown.setAttribute(
+                            "hidden",
+                            ""
+                        );
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            // ==========================================
+            // ESC
+            // ==========================================
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (event.key === "Escape") {
+
+                        dropdown.setAttribute(
+                            "hidden",
+                            ""
+                        );
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+    </script>
     {% endblock %}
 
 </body>

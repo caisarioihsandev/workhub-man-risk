@@ -40,21 +40,29 @@ Perbarui informasi dan hak akses pengguna
 
             <!-- USERNAME -->
 
+            <!-- USERNAME -->
+
             <div class="form-field">
 
                 <label for="username">
+
                     Username
+
+                    <span class="required">*</span>
+
                 </label>
 
                 <input
                     type="text"
                     id="username"
+                    name="username"
                     value="{{ user['username'] }}"
-                    disabled
+                    required
                 >
 
                 <small>
-                    Username tidak dapat diubah.
+                    Username dapat diubah oleh Superadmin.
+                    Username harus unik.
                 </small>
 
             </div>

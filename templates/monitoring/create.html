@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Upload Dokumen
+{% endblock %}
+
+{% block page_subtitle %}
+Tambah dokumen monitoring risiko
+{% endblock %}
+
+{% block header_actions %}
+<a
+    href="{{ url_for('monitoring.index') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card monitoring-form-card">
+
+    <div class="monitoring-form-header">
+
+        <h3>
+            Tambah Dokumen Monitoring Risiko
+        </h3>
+
+        <p>
+            Daftarkan dokumen monitoring risiko yang telah
+            diunggah ke Google Drive.
+        </p>
+
+    </div>
+
+
+    <form
+        method="post"
+        class="monitoring-form"
+    >
+
+        <!-- NAMA DOKUMEN -->
+
+        <div class="form-group full-width">
+
+            <label for="name">
+                Nama Dokumen <span>*</span>
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Contoh: Buku Monitoring Risiko Cabang dan Unit s.d Juli 2026"
+                value="{{ request.form.get('name', '') }}"
+                required
+            >
+
+        </div>
+
+
+        <!-- JENIS DOKUMEN -->
+
+        <div class="form-group">
+
+            <label for="document_type">
+                Jenis Dokumen
+            </label>
+
+            <input
+                type="text"
+                id="document_type"
+                value="Monitoring Risiko"
+                readonly
+            >
+
+            <small>
+                Jenis dokumen ditetapkan otomatis.
+            </small>
+
+        </div>
+
+
+        <!-- LINK DRIVE -->
+
+        <div class="form-group">
+
+            <label for="drive_url">
+                Link Google Drive <span>*</span>
+            </label>
+
+            <input
+                type="url"
+                id="drive_url"
+                name="drive_url"
+                placeholder="https://drive.google.com/..."
+                value="{{ request.form.get('drive_url', '') }}"
+                required
+            >
+
+            <small>
+                Gunakan link file atau folder Google Drive.
+            </small>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="monitoring-form-actions">
+
+            <a
+                href="{{ url_for('monitoring.index') }}"
+                class="secondary"
+            >
+                Batal
+            </a>
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                Simpan Dokumen
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -298,31 +298,38 @@ def edit(user_id):
         )
 
         return redirect(
-            url_for(
-                "admin_users.index"
-            )
+            url_for("admin_users.index")
         )
 
     if request.method == "POST":
 
+        # -------------------------------------------------
+        # AMBIL DATA FORM
+        # -------------------------------------------------
+
+        username = request.form.get(
+            "username",
+            "",
+        ).strip()
+
         full_name = request.form.get(
             "full_name",
-            ""
+            "",
         ).strip()
 
         email = request.form.get(
             "email",
-            ""
+            "",
         ).strip()
 
         role = request.form.get(
             "role",
-            "user"
+            "user",
         ).strip()
 
         password = request.form.get(
             "password",
-            ""
+            "",
         )
 
         is_active = (
@@ -333,38 +340,80 @@ def edit(user_id):
 
         error = None
 
-        # ---------------------------------------------
-        # VALIDATION
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # VALIDASI
+        # -------------------------------------------------
 
-        if not full_name:
+        if not username:
+
+            error = "Username wajib diisi."
+
+        elif not full_name:
+
             error = "Nama lengkap wajib diisi."
 
         elif role not in ROLE_LABELS:
+
             error = "Role tidak valid."
 
         elif password and len(password) < 8:
+
             error = (
                 "Password minimal 8 karakter."
             )
 
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # CEK FORMAT EMAIL
+        # -------------------------------------------------
+
+        elif email and "@" not in email:
+
+            error = "Format email tidak valid."
+
+        # -------------------------------------------------
+        # CEK USERNAME DUPLIKAT
+        # -------------------------------------------------
+
+        if error is None:
+
+            existing_username = db.execute(
+                """
+                SELECT id
+                FROM users
+                WHERE username = ?
+                  AND id != ?
+                """,
+                (
+                    username,
+                    user_id,
+                ),
+            ).fetchone()
+
+            if existing_username:
+
+                error = (
+                    "Username sudah digunakan "
+                    "oleh user lain."
+                )
+
+        # -------------------------------------------------
         # JANGAN NONAKTIFKAN DIRI SENDIRI
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         if (
             error is None
             and user["id"] == g.user["id"]
             and not is_active
         ):
+
             error = (
                 "Anda tidak dapat menonaktifkan "
                 "akun sendiri."
             )
 
-        # ---------------------------------------------
-        # JANGAN MENGHILANGKAN AKSES SUPERADMIN TERAKHIR
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # JANGAN MENGHILANGKAN SUPERADMIN TERAKHIR
+        # -------------------------------------------------
 
         if (
             error is None
@@ -403,9 +452,9 @@ def edit(user_id):
                         "Superadmin aktif."
                     )
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # UPDATE
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         if error is None:
 
@@ -415,6 +464,7 @@ def edit(user_id):
                     """
                     UPDATE users
                     SET
+                        username = ?,
                         full_name = ?,
                         email = ?,
                         password_hash = ?,
@@ -424,6 +474,7 @@ def edit(user_id):
                     WHERE id = ?
                     """,
                     (
+                        username,
                         full_name,
                         email,
                         generate_password_hash(
@@ -441,6 +492,7 @@ def edit(user_id):
                     """
                     UPDATE users
                     SET
+                        username = ?,
                         full_name = ?,
                         email = ?,
                         role = ?,
@@ -449,6 +501,7 @@ def edit(user_id):
                     WHERE id = ?
                     """,
                     (
+                        username,
                         full_name,
                         email,
                         role,
@@ -471,6 +524,10 @@ def edit(user_id):
                 )
             )
 
+        # -------------------------------------------------
+        # TAMPILKAN ERROR
+        # -------------------------------------------------
+
         flash(
             error,
             "error",
@@ -483,7 +540,6 @@ def edit(user_id):
         user=user,
         role_labels=ROLE_LABELS,
     )
-
 
 # =========================================================
 # TOGGLE STATUS

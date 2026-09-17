@@ -449,3 +449,159 @@ def disposition_email(item_id):
     return redirect(
         f"https://mail.google.com/mail/?{params}"
     )
+
+
+# ============================================================
+# TASK TIM
+# ============================================================
+
+@bp.get("/task-tim/")
+@login_required
+def team_tasks():
+
+    db = get_db()
+
+    query = request.args.get("q", "").strip()
+    status = request.args.get("status", "")
+    priority = request.args.get("priority", "")
+
+    sql = """
+        SELECT *
+        FROM work_items
+        WHERE 1=1
+    """
+
+    params = []
+
+    # SEARCH
+    if query:
+
+        sql += """
+            AND (
+                title LIKE ?
+                OR pic LIKE ?
+                OR assignees LIKE ?
+                OR category LIKE ?
+            )
+        """
+
+        needle = f"%{query}%"
+
+        params.extend([
+            needle,
+            needle,
+            needle,
+            needle,
+        ])
+
+    # STATUS
+    if status in STATUSES:
+
+        sql += """
+            AND status = ?
+        """
+
+        params.append(status)
+
+    # PRIORITY
+    if priority in PRIORITIES:
+
+        sql += """
+            AND priority = ?
+        """
+
+        params.append(priority)
+
+    sql += """
+        ORDER BY
+            CASE
+                WHEN deadline = ''
+                THEN 1
+                ELSE 0
+            END,
+            deadline,
+            id DESC
+    """
+
+    tasks = [
+        dict(row)
+        for row in db.execute(
+            sql,
+            params
+        ).fetchall()
+    ]
+
+    # ========================================================
+    # METRICS
+    # ========================================================
+
+    all_tasks = [
+        dict(row)
+        for row in db.execute(
+            """
+            SELECT *
+            FROM work_items
+            """
+        ).fetchall()
+    ]
+
+    metrics = {
+
+        "total": len(all_tasks),
+
+        "active": sum(
+            task["status"] != "Selesai"
+            for task in all_tasks
+        ),
+
+        "review": sum(
+            task["status"] == "Menunggu Review"
+            for task in all_tasks
+        ),
+
+        "done": sum(
+            task["status"] == "Selesai"
+            for task in all_tasks
+        ),
+    }
+
+    return render_template(
+        "team/index.html",
+        tasks=tasks,
+        metrics=metrics,
+        query=query,
+        selected_status=status,
+        selected_priority=priority,
+        statuses=STATUSES,
+        priorities=PRIORITIES,
+    )
+
+@bp.get("/items/<int:item_id>")
+@login_required
+def detail(item_id):
+
+    db = get_db()
+
+    task = db.execute(
+        """
+        SELECT *
+        FROM work_items
+        WHERE id = ?
+        """,
+        (item_id,),
+    ).fetchone()
+
+    if task is None:
+        flash(
+            "Task tidak ditemukan.",
+            "error"
+        )
+
+        return redirect(
+            url_for("work.team_tasks")
+        )
+
+    return render_template(
+        "team/detail.html",
+        task=task
+    )

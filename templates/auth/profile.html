@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Profil Saya - Workhub Manajemen Risiko
+{% endblock %}
+
+
+{% block page_title %}
+Profil Saya
+{% endblock %}
+
+
+{% block page_subtitle %}
+Kelola informasi dan keamanan akun Anda
+{% endblock %}
+
+
+{% block header_actions %}
+
+<a
+    href="{{ url_for('work.index') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="profile-page">
+
+
+    <!-- ==================================================
+         INFORMASI PROFIL
+         ================================================== -->
+
+    <section class="card profile-card">
+
+        <div class="profile-card-header">
+
+            <div class="profile-big-avatar">
+                {{ user["full_name"][0]|upper }}
+            </div>
+
+            <div>
+
+                <h2>
+                    Informasi Profil
+                </h2>
+
+                <p>
+                    Perbarui informasi akun yang Anda gunakan
+                    dalam Workhub Manajemen Risiko.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            action="{{ url_for('auth.profile') }}"
+            class="profile-form"
+        >
+
+            <div class="profile-form-grid">
+
+
+                <!-- NAMA -->
+
+                <div class="form-group">
+
+                    <label for="full_name">
+                        Nama Lengkap <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        value="{{ user['full_name'] }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- USERNAME -->
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="{{ user['username'] }}"
+                        required
+                    >
+
+                    <small>
+                        Username digunakan saat login.
+                    </small>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group full-width">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ user['email'] }}"
+                        placeholder="nama@perikananindonesia.co.id"
+                    >
+
+                </div>
+
+
+                <!-- ROLE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Role
+                    </label>
+
+                    <input
+                        type="text"
+                        value="{% if user['role'] == 'superadmin' %}Superadmin{% elif user['role'] == 'vice_president' %}Vice President{% else %}User{% endif %}"
+                        readonly
+                    >
+
+                    <small>
+                        Role hanya dapat diubah melalui Manajemen User.
+                    </small>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Status Akun
+                    </label>
+
+                    <input
+                        type="text"
+                        value="{{ 'Aktif' if user['is_active'] else 'Tidak Aktif' }}"
+                        readonly
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-form-actions">
+
+                <button
+                    type="submit"
+                    class="primary"
+                >
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- ==================================================
+         KEAMANAN
+         ================================================== -->
+
+    <section
+        class="card profile-card"
+        id="keamanan"
+    >
+
+        <div class="profile-section-header">
+
+            <div>
+
+                <h2>
+                    Keamanan Akun
+                </h2>
+
+                <p>
+                    Gunakan password yang kuat dan tidak mudah ditebak.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            action="{{ url_for('auth.change_password') }}"
+            class="profile-form"
+        >
+
+            <div class="profile-form-grid">
+
+
+                <div class="form-group full-width">
+
+                    <label for="current_password">
+                        Password Saat Ini <span>*</span>
+                    </label>
+
+                    <input
+                        type="password"
+                        id="current_password"
+                        name="current_password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="new_password">
+                        Password Baru <span>*</span>
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new_password"
+                        name="new_password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                    <small>
+                        Minimal 6 karakter.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="confirm_password">
+                        Konfirmasi Password Baru <span>*</span>
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-form-actions">
+
+                <button
+                    type="submit"
+                    class="primary"
+                >
+                    Ubah Password
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
+
+{% endblock %}

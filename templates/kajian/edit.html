@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Edit Dokumen
+{% endblock %}
+
+{% block page_subtitle %}
+Perbarui dokumen kajian risiko
+{% endblock %}
+
+{% block header_actions %}
+<a
+    href="{{ url_for('kajian.index') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card monitoring-form-card">
+
+    <div class="monitoring-form-header">
+
+        <h3>
+            Edit Dokumen Kajian Risiko
+        </h3>
+
+        <p>
+            Perbarui nama atau link Google Drive dokumen.
+        </p>
+
+    </div>
+
+
+    <form
+        method="post"
+        class="monitoring-form"
+    >
+
+        <div class="form-group full-width">
+
+            <label for="name">
+                Nama Dokumen <span>*</span>
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ request.form.get('name', document['name']) }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="document_type">
+                Jenis Dokumen
+            </label>
+
+            <input
+                type="text"
+                id="document_type"
+                value="Kajian Risiko"
+                readonly
+            >
+
+            <small>
+                Jenis dokumen tidak dapat diubah dari modul ini.
+            </small>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="drive_url">
+                Link Google Drive <span>*</span>
+            </label>
+
+            <input
+                type="url"
+                id="drive_url"
+                name="drive_url"
+                value="{{ request.form.get('drive_url', document['drive_url']) }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="monitoring-form-actions">
+
+            <a
+                href="{{ url_for('kajian.index') }}"
+                class="secondary"
+            >
+                Batal
+            </a>
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Task Tim
+{% endblock %}
+
+{% block page_subtitle %}
+Pengelolaan tugas dan pekerjaan tim
+{% endblock %}
+
+{% block header_actions %}
+<a
+    href="{{ url_for('work.index', open_add='1') }}"
+    class="primary"
+>
+    ＋ Tambah Task
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="page-header">
+    <div>
+        <h1>Task Tim</h1>
+        <p>
+            Monitoring tugas, PIC, progress, dan deadline pekerjaan tim.
+        </p>
+    </div>
+</div>
+
+
+<!-- =========================================================
+     METRICS
+========================================================= -->
+
+<div class="stats-grid task-team-stats">
+
+    <!-- TOTAL -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            📋
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Total Task
+            </span>
+
+            <strong>
+                {{ metrics["total"] }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- AKTIF -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon task-stat-active">
+            ⚡
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Task Aktif
+            </span>
+
+            <strong>
+                {{ metrics["active"] }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- REVIEW -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon task-stat-review">
+            🔍
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Menunggu Review
+            </span>
+
+            <strong>
+                {{ metrics["review"] }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- SELESAI -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon task-stat-done">
+            ✓
+        </div>
+
+        <div>
+            <span class="stat-label">
+                Selesai
+            </span>
+
+            <strong>
+                {{ metrics["done"] }}
+            </strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FILTER
+========================================================= -->
+
+<div class="card task-filter-card">
+
+    <div class="card-header">
+
+        <div>
+            <h2>Filter Task</h2>
+
+            <p>
+                Cari dan saring pekerjaan berdasarkan status atau prioritas.
+            </p>
+        </div>
+
+    </div>
+
+
+    <form
+        method="get"
+        class="task-filter-form"
+    >
+
+        <!-- SEARCH -->
+
+        <div class="form-group task-search">
+
+            <label for="q">
+                Cari Task
+            </label>
+
+            <input
+                type="text"
+                id="q"
+                name="q"
+                value="{{ query }}"
+                placeholder="Cari task, PIC, anggota tim..."
+            >
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="form-group">
+
+            <label for="status">
+                Status
+            </label>
+
+            <select
+                id="status"
+                name="status"
+            >
+
+                <option value="">
+                    Semua Status
+                </option>
+
+                {% for item_status in statuses %}
+
+                <option
+                    value="{{ item_status }}"
+                    {% if selected_status == item_status %}
+                        selected
+                    {% endif %}
+                >
+                    {{ item_status }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- PRIORITY -->
+
+        <div class="form-group">
+
+            <label for="priority">
+                Prioritas
+            </label>
+
+            <select
+                id="priority"
+                name="priority"
+            >
+
+                <option value="">
+                    Semua Prioritas
+                </option>
+
+                {% for item_priority in priorities %}
+
+                <option
+                    value="{{ item_priority }}"
+                    {% if selected_priority == item_priority %}
+                        selected
+                    {% endif %}
+                >
+                    {{ item_priority }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="task-filter-actions">
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                🔎 Filter
+            </button>
+
+            <a
+                href="{{ url_for('work.team_tasks') }}"
+                class="secondary"
+            >
+                Reset
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- =========================================================
+     DAFTAR TASK
+========================================================= -->
+
+<div class="card task-list-card">
+
+    <div class="card-header">
+
+        <div>
+            <h2>
+                Daftar Task Tim
+            </h2>
+
+            <p>
+                Daftar pekerjaan yang sedang dikelola oleh tim.
+            </p>
+        </div>
+
+        {% if tasks %}
+        <span class="task-total-label">
+            {{ tasks|length }} Task
+        </span>
+        {% endif %}
+
+    </div>
+
+
+    {% if tasks %}
+
+    <div class="table-wrapper task-table-wrapper">
+
+        <table class="data-table task-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Task
+                    </th>
+
+                    <th>
+                        Kategori
+                    </th>
+
+                    <th>
+                        PIC
+                    </th>
+
+                    <th>
+                        Anggota Tim
+                    </th>
+
+                    <th>
+                        Prioritas
+                    </th>
+
+                    <th>
+                        Progress
+                    </th>
+
+                    <th>
+                        Deadline
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for task in tasks %}
+
+            <tr>
+
+                <!-- TASK -->
+                <td class="task-title-cell">
+
+                    <div class="task-title">
+                        {{ task["title"] }}
+                    </div>
+
+                    <div class="task-category-mobile">
+                        {{ task["category"] }}
+                    </div>
+
+                </td>
+
+
+                <!-- KATEGORI -->
+                <td>
+
+                    <span class="task-category">
+                        {{ task["category"] }}
+                    </span>
+
+                </td>
+
+
+                <!-- PIC -->
+                <td>
+
+                    <div class="person-cell">
+
+                        <span class="person-avatar">
+                            {{ (task["pic"] or "?")[0]|upper }}
+                        </span>
+
+                        <span>
+                            {{ task["pic"] or "-" }}
+                        </span>
+
+                    </div>
+
+                </td>
+
+
+                <!-- ANGGOTA -->
+                <td>
+
+                    {% if task["assignees"] %}
+
+                        <div class="member-cell">
+
+                            <span class="member-avatar">
+                                {{ (task["assignees"] or "?")[0]|upper }}
+                            </span>
+
+                            <span>
+                                {{ task["assignees"] }}
+                            </span>
+
+                        </div>
+
+                    {% else %}
+
+                        <span class="text-muted">
+                            -
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- PRIORITAS -->
+                <td>
+
+                    {% if task["priority"] == "Kritis" %}
+
+                        <span class="priority-badge priority-critical">
+                            Kritis
+                        </span>
+
+                    {% elif task["priority"] == "Tinggi" %}
+
+                        <span class="priority-badge priority-high">
+                            Tinggi
+                        </span>
+
+                    {% elif task["priority"] == "Sedang" %}
+
+                        <span class="priority-badge priority-medium">
+                            Sedang
+                        </span>
+
+                    {% else %}
+
+                        <span class="priority-badge priority-low">
+                            Rendah
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- PROGRESS -->
+                <td>
+
+                    <div class="progress-cell">
+
+                        <div class="progress-value">
+                            {{ task["progress"] or 0 }}%
+                        </div>
+
+                        <div class="progress-track">
+
+                            <div
+                                class="progress-fill"
+                                style="width: {{ task['progress'] or 0 }}%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <!-- DEADLINE -->
+                <td>
+
+                    {% if task["deadline"] %}
+
+                        <div class="deadline-cell">
+
+                            <span class="deadline-icon">
+                                📅
+                            </span>
+
+                            <span>
+                                {{ task["deadline"] }}
+                            </span>
+
+                        </div>
+
+                    {% else %}
+
+                        <span class="text-muted">
+                            Belum ditetapkan
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- STATUS -->
+                <td>
+
+                    {% if task["status"] == "Selesai" %}
+
+                        <span class="status-badge status-active">
+                            ● Selesai
+                        </span>
+
+                    {% elif task["status"] == "Menunggu Review" %}
+
+                        <span class="status-badge status-progress">
+                            ● Menunggu Review
+                        </span>
+
+                    {% elif task["status"] == "Dalam Proses" %}
+
+                        <span class="status-badge status-progress">
+                            ● Dalam Proses
+                        </span>
+
+                    {% else %}
+
+                        <span class="status-badge">
+                            ● Belum Dimulai
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- AKSI -->
+                <td>
+
+                    <div class="task-actions">
+
+                        <a
+                            href="{{ url_for('work.detail', item_id=task['id']) }}"
+                            class="action-link"
+                        >
+                            Detail →
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <!-- EMPTY STATE -->
+
+    <div class="empty-state">
+
+        <div class="empty-state-icon">
+            👥
+        </div>
+
+        <h3>
+            Belum Ada Task
+        </h3>
+
+        <p>
+            Belum terdapat pekerjaan yang dikelola oleh tim.
+        </p>
+
+        <a
+            href="{{ url_for('work.index', open_add='1') }}"
+            class="primary"
+        >
+            ＋ Tambah Task
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

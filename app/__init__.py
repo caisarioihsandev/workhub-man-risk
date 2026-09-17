@@ -39,10 +39,11 @@ def create_app():
 
     app.config.from_mapping(
     SECRET_KEY=os.environ.get("SECRET_KEY", "change-this-in-production"),
-    DATABASE=os.environ.get(
-        "DATABASE_PATH",
-        str(BASE_DIR / "workhub.db")
-    ),
+    # DATABASE=os.environ.get(
+    #     "DATABASE_PATH",
+    #     str(BASE_DIR / "workhub.db")
+    # ),
+    DATABASE=os.environ.get("DATABASE_PATH") or str(BASE_DIR / "workhub.db"),
 )
 
 
@@ -106,5 +107,31 @@ def create_app():
     app.register_blueprint(
         progress.bp
     )
+
+    # =====================================================
+    # MONITORING
+    # =====================================================
+
+    from . import monitoring
+
+    app.register_blueprint(
+        monitoring.bp
+    )
+
+    # =====================================================
+    # MONITORING
+    # =====================================================
+
+    from . import kajian
+
+    app.register_blueprint(kajian.bp)
+
+    # =====================================================
+    # DOCUMENTS
+    # =====================================================
+
+    from . import documents
+
+    app.register_blueprint(documents.bp)
 
     return app

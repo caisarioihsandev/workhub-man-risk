@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Kajian Risiko
+{% endblock %}
+
+{% block page_subtitle %}
+Dokumen kajian risiko perusahaan
+{% endblock %}
+
+{% block header_actions %}
+<a
+    href="{{ url_for('kajian.create') }}"
+    class="primary"
+>
+    ＋ Upload Dokumen
+</a>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card monitoring-card">
+
+    <div class="monitoring-toolbar">
+
+        <div>
+            <h3>
+                Dokumen Kajian Risiko
+            </h3>
+
+            <p class="monitoring-description">
+                Daftar dokumen kajian risiko yang tersimpan pada Google Drive.
+            </p>
+        </div>
+
+
+        <form
+            method="get"
+            action="{{ url_for('kajian.index') }}"
+            class="monitoring-search"
+        >
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Cari nama dokumen..."
+            >
+
+            <button
+                type="submit"
+                class="secondary"
+            >
+                Cari
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if documents %}
+
+    <div class="monitoring-table-wrap">
+
+        <table class="monitoring-table">
+
+            <thead>
+
+                <tr>
+
+                    <th class="monitoring-number">
+                        No.
+                    </th>
+
+                    <th>
+                        Nama Dokumen
+                    </th>
+
+                    <th>
+                        Jenis
+                    </th>
+
+                    <th>
+                        Tanggal
+                    </th>
+
+                    <th style="text-align: right;">
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for document in documents %}
+
+                <tr>
+
+                    <td class="monitoring-number">
+                        {{ loop.index }}
+                    </td>
+
+
+                    <td>
+
+                        <div class="monitoring-document-name">
+                            {{ document["name"] }}
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="monitoring-type">
+                            {{ document["document_type"] }}
+                        </span>
+
+                    </td>
+
+
+                    <td class="monitoring-date">
+
+                        {% if document["created_at"] %}
+                            {{ document["created_at"][:10] }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="monitoring-actions">
+
+                            <a
+                                href="{{ document['drive_url'] }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="primary monitoring-open"
+                            >
+                                ▣ Buka Drive
+                            </a>
+
+
+                            <a
+                                href="{{ url_for(
+                                    'kajian.edit',
+                                    document_id=document['id']
+                                ) }}"
+                                class="secondary monitoring-edit"
+                            >
+                                Edit
+                            </a>
+
+
+                            <form
+                                method="post"
+                                action="{{ url_for(
+                                    'kajian.delete',
+                                    document_id=document['id']
+                                ) }}"
+                                style="display: inline;"
+                                onsubmit="return confirm(
+                                    'Yakin ingin menghapus dokumen ini?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="danger monitoring-delete"
+                                >
+                                    Hapus
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="monitoring-empty">
+
+        <div class="monitoring-empty-icon">
+            📄
+        </div>
+
+        <h3>
+            Belum ada dokumen kajian risiko
+        </h3>
+
+        <p>
+            Silakan tambahkan dokumen kajian risiko
+            yang tersimpan di Google Drive.
+        </p>
+
+        <a
+            href="{{ url_for('kajian.create') }}"
+            class="primary"
+        >
+            ＋ Upload Dokumen
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

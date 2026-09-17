@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Detail Task Tim
+{% endblock %}
+
+{% block page_subtitle %}
+Informasi lengkap tugas dan pekerjaan tim
+{% endblock %}
+
+{% block header_actions %}
+
+<a
+    href="{{ url_for('progress.edit', work_id=task['id']) }}"
+    class="primary"
+>
+    ✎ Edit Task
+</a>
+
+<a
+    href="{{ url_for('work.team_tasks') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     HEADER TASK
+========================================================= -->
+
+<div class="task-detail-header">
+
+    <div>
+
+        <span class="task-detail-category">
+            {{ task["category"] }}
+        </span>
+
+        <h1>
+            {{ task["title"] }}
+        </h1>
+
+        <p>
+            Task Tim · {{ task["pic"] or "PIC belum ditentukan" }}
+        </p>
+
+    </div>
+
+    <div class="task-detail-status">
+
+        {% if task["status"] == "Selesai" %}
+
+            <span class="status-badge status-active">
+                ● Selesai
+            </span>
+
+        {% elif task["status"] == "Menunggu Review" %}
+
+            <span class="status-badge status-progress">
+                ● Menunggu Review
+            </span>
+
+        {% elif task["status"] == "Dalam Proses" %}
+
+            <span class="status-badge status-progress">
+                ● Dalam Proses
+            </span>
+
+        {% else %}
+
+            <span class="status-badge">
+                ● Belum Dimulai
+            </span>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     INFORMASI TASK
+========================================================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Informasi Task</h2>
+
+            <p>
+                Informasi dasar pekerjaan yang dikelola oleh tim.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="task-info-grid">
+
+        <div class="task-info-item">
+
+            <span class="task-info-label">
+                PIC
+            </span>
+
+            <strong>
+                {{ task["pic"] or "-" }}
+            </strong>
+
+        </div>
+
+
+        <div class="task-info-item">
+
+            <span class="task-info-label">
+                Anggota Tim
+            </span>
+
+            <strong>
+                {{ task["assignees"] or "-" }}
+            </strong>
+
+        </div>
+
+
+        <div class="task-info-item">
+
+            <span class="task-info-label">
+                Kategori
+            </span>
+
+            <strong>
+                {{ task["category"] }}
+            </strong>
+
+        </div>
+
+
+        <div class="task-info-item">
+
+            <span class="task-info-label">
+                Prioritas
+            </span>
+
+            {% if task["priority"] == "Kritis" %}
+
+                <span class="priority-badge priority-critical">
+                    Kritis
+                </span>
+
+            {% elif task["priority"] == "Tinggi" %}
+
+                <span class="priority-badge priority-high">
+                    Tinggi
+                </span>
+
+            {% elif task["priority"] == "Sedang" %}
+
+                <span class="priority-badge priority-medium">
+                    Sedang
+                </span>
+
+            {% else %}
+
+                <span class="priority-badge priority-low">
+                    Rendah
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="task-info-item">
+
+            <span class="task-info-label">
+                Deadline
+            </span>
+
+            <strong>
+                {{ task["deadline"] or "Belum ditetapkan" }}
+            </strong>
+
+        </div>
+
+
+        <div class="task-info-item">
+
+            <span class="task-info-label">
+                Progress
+            </span>
+
+            <strong>
+                {{ task["progress"] or 0 }}%
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PROGRESS
+========================================================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Progress Pekerjaan</h2>
+
+            <p>
+                Perkembangan pekerjaan sampai saat ini.
+            </p>
+
+        </div>
+
+        <strong class="large-progress-value">
+            {{ task["progress"] or 0 }}%
+        </strong>
+
+    </div>
+
+
+    <div class="detail-progress">
+
+        <div class="detail-progress-track">
+
+            <div
+                class="detail-progress-fill"
+                style="width: {{ task['progress'] or 0 }}%;"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="progress-status-text">
+
+        {% if task["status"] == "Selesai" %}
+
+            Pekerjaan telah selesai.
+
+        {% elif task["status"] == "Menunggu Review" %}
+
+            Pekerjaan menunggu proses review.
+
+        {% elif task["status"] == "Dalam Proses" %}
+
+            Pekerjaan sedang dalam proses.
+
+        {% else %}
+
+            Pekerjaan belum dimulai.
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     DOKUMEN
+========================================================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Dokumen</h2>
+
+            <p>
+                Dokumen pendukung pekerjaan.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if task["drive_url"] %}
+
+        <a
+            href="{{ task['drive_url'] }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="document-link"
+        >
+            📁 Buka Dokumen Google Drive →
+        </a>
+
+    {% else %}
+
+        <div class="empty-inline">
+            Belum ada dokumen yang ditautkan.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================================================
+     CATATAN
+========================================================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Catatan</h2>
+
+            <p>
+                Catatan tambahan terkait pekerjaan.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="task-notes">
+
+        {{ task["notes"] or "Tidak ada catatan." }}
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ACTION
+========================================================= -->
+
+<div class="task-detail-actions">
+
+    <a
+        href="{{ url_for('work.disposition_email', item_id=task['id']) }}"
+        class="secondary"
+    >
+        ✉ Disposisi via Gmail
+    </a>
+
+    <form
+        method="post"
+        action="{{ url_for('work.delete_item', item_id=task['id']) }}"
+        onsubmit="return confirm('Yakin ingin menghapus task ini?');"
+    >
+
+        <button
+            type="submit"
+            class="danger"
+        >
+            🗑 Hapus Task
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

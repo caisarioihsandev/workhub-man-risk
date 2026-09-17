@@ -38,7 +38,7 @@ Pusat kendali pekerjaan dan dokumen manajemen risiko
  <article class="panel"><h2>Ringkasan progres</h2><p>Distribusi pekerjaan berdasarkan status</p>
     {% for status in statuses %}{% set count=status_counts[status] %}{% set pct=(count / total * 100)|round|int if total else 0 %}
       <div class="bar-label"><span>{{ status }}</span><span>{{ count }} item · {{ pct }}%</span></div>
-      <div class="bar"><i style="width:'{{ pct }}%'"></i></div>
+      <div class="bar"><i style="width:{{ pct }}%"></i></div>
     {% endfor %}
   </article>
   <article class="focus"><p>Fokus pengendalian</p><h2>Data yang perlu perhatian</h2><strong>{{ metrics.overdue }}</strong><span>pekerjaan melewati tenggat</span><strong>{{ metrics.review }}</strong><span>pekerjaan menunggu review</span></article>

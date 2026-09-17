@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Edit Dokumen
+{% endblock %}
+
+{% block page_subtitle %}
+Memperbarui informasi dokumen
+{% endblock %}
+
+{% block header_actions %}
+
+<a
+    href="{{ url_for('documents.index') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="documents-page">
+
+
+    <!-- =====================================================
+         PAGE INTRO
+    ====================================================== -->
+
+    <div class="documents-intro">
+
+        <div class="documents-intro-icon">
+            ✎
+        </div>
+
+        <div>
+
+            <h1>
+                Edit Dokumen
+            </h1>
+
+            <p>
+                Perbarui informasi dokumen
+                <strong>{{ document["name"] }}</strong>.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM CARD
+    ====================================================== -->
+
+    <div class="document-form-card">
+
+        <div class="document-form-header">
+
+            <div class="document-form-icon">
+                📁
+            </div>
+
+            <div>
+
+                <h2>
+                    Informasi Dokumen
+                </h2>
+
+                <p>
+                    Perbarui nama, jenis, atau link dokumen.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            class="document-form"
+        >
+
+
+            <!-- =================================================
+                 NAMA DOKUMEN
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Nama Dokumen
+                    <span class="required-mark">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ document['name'] }}"
+                    placeholder="Contoh: Kebijakan Manajemen Risiko"
+                    required
+                >
+
+                <small class="form-help">
+                    Perbarui nama dokumen jika diperlukan.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 JENIS DOKUMEN
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="document_type">
+                    Jenis Dokumen
+                    <span class="required-mark">*</span>
+                </label>
+
+                <select
+                    id="document_type"
+                    name="document_type"
+                    required
+                >
+
+                    <option value="">
+                        Pilih Jenis Dokumen
+                    </option>
+
+                    {% for item_type in document_types %}
+
+                    <option
+                        value="{{ item_type }}"
+                        {% if document["document_type"] == item_type %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ item_type }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <small class="form-help">
+                    Pilih kategori yang sesuai dengan dokumen.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 LINK GOOGLE DRIVE
+            ================================================== -->
+
+            <div class="form-group full-width">
+
+                <label for="drive_url">
+                    Link Google Drive
+                    <span class="required-mark">*</span>
+                </label>
+
+                <div class="drive-input-wrapper">
+
+                    <span class="drive-input-icon">
+                        🔗
+                    </span>
+
+                    <input
+                        type="url"
+                        id="drive_url"
+                        name="drive_url"
+                        value="{{ document['drive_url'] }}"
+                        placeholder="https://drive.google.com/..."
+                        required
+                    >
+
+                </div>
+
+                <small class="form-help">
+                    Periksa kembali link Google Drive sebelum menyimpan perubahan.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 INFO BOX
+            ================================================== -->
+
+            <div class="drive-info-box">
+
+                <div class="drive-info-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <strong>
+                        Perhatian
+                    </strong>
+
+                    <p>
+                        Perubahan pada halaman ini hanya memperbarui
+                        informasi dan link dokumen pada Database Dokumen.
+                        File asli tetap berada di Google Drive.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORM ACTION
+            ================================================== -->
+
+            <div class="document-form-actions">
+
+                <a
+                    href="{{ url_for('documents.index') }}"
+                    class="secondary"
+                >
+                    Batal
+                </a>
+
+                <button
+                    type="submit"
+                    class="primary"
+                >
+                    ✓ Simpan Perubahan
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

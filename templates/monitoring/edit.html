@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Edit Dokumen
+{% endblock %}
+
+{% block page_subtitle %}
+Perbarui dokumen monitoring risiko
+{% endblock %}
+
+{% block header_actions %}
+<a
+    href="{{ url_for('monitoring.index') }}"
+    class="secondary"
+>
+    ← Kembali
+</a>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card monitoring-form-card">
+
+    <div class="monitoring-form-header">
+
+        <h3>
+            Edit Dokumen Monitoring Risiko
+        </h3>
+
+        <p>
+            Perbarui nama atau link Google Drive dokumen.
+        </p>
+
+    </div>
+
+
+    <form
+        method="post"
+        class="monitoring-form"
+    >
+
+        <!-- NAMA -->
+
+        <div class="form-group full-width">
+
+            <label for="name">
+                Nama Dokumen <span>*</span>
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ request.form.get('name', document['name']) }}"
+                required
+            >
+
+        </div>
+
+
+        <!-- JENIS -->
+
+        <div class="form-group">
+
+            <label for="document_type">
+                Jenis Dokumen
+            </label>
+
+            <input
+                type="text"
+                id="document_type"
+                value="Monitoring Risiko"
+                readonly
+            >
+
+            <small>
+                Jenis dokumen tidak dapat diubah dari modul ini.
+            </small>
+
+        </div>
+
+
+        <!-- DRIVE -->
+
+        <div class="form-group">
+
+            <label for="drive_url">
+                Link Google Drive <span>*</span>
+            </label>
+
+            <input
+                type="url"
+                id="drive_url"
+                name="drive_url"
+                value="{{ request.form.get('drive_url', document['drive_url']) }}"
+                required
+            >
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="monitoring-form-actions">
+
+            <a
+                href="{{ url_for('monitoring.index') }}"
+                class="secondary"
+            >
+                Batal
+            </a>
+
+            <button
+                type="submit"
+                class="primary">
+                Simpan Perubahan
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
