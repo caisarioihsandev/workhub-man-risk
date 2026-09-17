@@ -9158,7 +9158,6 @@ td small {
 
 .task-table th:nth-child(1),
 .task-table td:nth-child(1) {
-    width: 310px;
     text-align: left !important;
 }
 
@@ -9256,97 +9255,6 @@ td small {
    AKSI
    ------------------------------------------------------------ */
 
-.task-table th:nth-child(9),
-.task-table td:nth-child(9) {
-    width: 100px;
-}
-
-/* ============================================================
-   TASK TIM - PROPORSI KOLOM TABEL
-   ============================================================ */
-
-.task-table {
-    width: 100%;
-    min-width: 1180px;
-    table-layout: fixed;
-    border-collapse: collapse;
-}
-
-/* TASK */
-.task-table th:nth-child(1),
-.task-table td:nth-child(1) {
-    width: 330px;
-    text-align: left !important;
-}
-
-.task-title-cell {
-    width: 330px;
-    min-width: 330px;
-    max-width: 330px;
-    text-align: left !important;
-}
-
-.task-title-cell strong {
-    display: block;
-    line-height: 1.45;
-    white-space: normal;
-    word-break: normal;
-}
-
-/* KATEGORI */
-.task-table th:nth-child(2),
-.task-table td:nth-child(2) {
-    width: 125px;
-    min-width: 125px;
-    max-width: 125px;
-}
-
-.task-category {
-    width: 125px;
-    max-width: 125px;
-    font-size: 13px;
-    line-height: 1.4;
-    white-space: normal;
-    word-break: break-word;
-}
-
-/* PIC */
-.task-table th:nth-child(3),
-.task-table td:nth-child(3) {
-    width: 90px;
-}
-
-/* ANGGOTA TIM */
-.task-table th:nth-child(4),
-.task-table td:nth-child(4) {
-    width: 170px;
-}
-
-/* PRIORITAS */
-.task-table th:nth-child(5),
-.task-table td:nth-child(5) {
-    width: 85px;
-}
-
-/* PROGRESS */
-.task-table th:nth-child(6),
-.task-table td:nth-child(6) {
-    width: 115px;
-}
-
-/* DEADLINE */
-.task-table th:nth-child(7),
-.task-table td:nth-child(7) {
-    width: 115px;
-}
-
-/* STATUS */
-.task-table th:nth-child(8),
-.task-table td:nth-child(8) {
-    width: 110px;
-}
-
-/* AKSI */
 .task-table th:nth-child(9),
 .task-table td:nth-child(9) {
     width: 100px;
