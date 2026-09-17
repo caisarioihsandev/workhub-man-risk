@@ -20,10 +20,8 @@ bp = Blueprint(
 
 
 DOCUMENT_TYPES = [
-    "Kebijakan",
     "Pedoman",
     "SOP",
-    "Prosedur",
     "Monitoring Risiko",
     "Kajian Risiko",
     "Regulasi",

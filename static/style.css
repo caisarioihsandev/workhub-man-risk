@@ -9140,3 +9140,123 @@ td small {
 /* ============================================================
    END
    ============================================================ */
+
+/* ============================================================
+   TASK TIM - PENYESUAIAN KOLOM TABEL
+   ============================================================ */
+
+.task-table {
+    width: 100%;
+    min-width: 1230px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* ------------------------------------------------------------
+   KOLOM TASK
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(1),
+.task-table td:nth-child(1) {
+    width: 310px;
+    text-align: left !important;
+}
+
+.task-title-cell {
+    width: 310px;
+    min-width: 310px;
+    max-width: 310px;
+    text-align: left !important;
+}
+
+.task-title-cell strong {
+    display: block;
+    text-align: left;
+    line-height: 1.45;
+    white-space: normal;
+    word-break: normal;
+}
+
+/* ------------------------------------------------------------
+   KOLOM KATEGORI
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(2),
+.task-table td:nth-child(2) {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+.task-category {
+    width: 120px;
+    max-width: 120px;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+}
+
+/* ------------------------------------------------------------
+   PIC
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(3),
+.task-table td:nth-child(3) {
+    width: 100px;
+}
+
+/* ------------------------------------------------------------
+   ANGGOTA TIM
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(4),
+.task-table td:nth-child(4) {
+    width: 180px;
+}
+
+/* ------------------------------------------------------------
+   PRIORITAS
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(5),
+.task-table td:nth-child(5) {
+    width: 90px;
+}
+
+/* ------------------------------------------------------------
+   PROGRESS
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(6),
+.task-table td:nth-child(6) {
+    width: 110px;
+}
+
+/* ------------------------------------------------------------
+   TENGGAT
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(7),
+.task-table td:nth-child(7) {
+    width: 120px;
+}
+
+/* ------------------------------------------------------------
+   STATUS
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(8),
+.task-table td:nth-child(8) {
+    width: 100px;
+}
+
+/* ------------------------------------------------------------
+   AKSI
+   ------------------------------------------------------------ */
+
+.task-table th:nth-child(9),
+.task-table td:nth-child(9) {
+    width: 100px;
+}
