@@ -295,65 +295,25 @@ Pengelolaan tugas dan pekerjaan tim
     <div class="table-wrapper task-table-wrapper">
 
         <table class="data-table task-table">
-
             <thead>
-
                 <tr>
-
-                    <th>
-                        Task
-                    </th>
-
-                    <th>
-                        Kategori
-                    </th>
-
-                    <th>
-                        PIC
-                    </th>
-
-                    <th>
-                        Anggota Tim
-                    </th>
-
-                    <th>
-                        Prioritas
-                    </th>
-
-                    <th>
-                        Progress
-                    </th>
-
-                    <th>
-                        Deadline
-                    </th>
-
-                    <th>
-                        Status
-                    </th>
-
+                    <th>Task</th>
+                    <th>Kategori</th>
+                    <th>PIC</th>
+                    <th>Email PIC</th>
+                    <th>Prioritas</th>
+                    <th>Progress</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
                 </tr>
-
             </thead>
-
-
             <tbody>
-
             {% for task in tasks %}
-
             <tr>
-
                 <!-- TASK -->
                 <td class="task-title-cell">
-
-                    <div class="task-title">
-                        {{ task["title"] }}
-                    </div>
-
-                    <div class="task-category-mobile">
-                        {{ task["category"] }}
-                    </div>
-
+                    <div class="task-title">{{ task["title"] }}</div>
+                    <div class="task-category-mobile">{{ task["category"] }}</div>
                 </td>
 
 
